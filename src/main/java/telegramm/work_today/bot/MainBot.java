@@ -1,6 +1,7 @@
 package telegramm.work_today.bot;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -14,9 +15,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Component
-public class MainBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
+public class MainBot implements SpringLongPollingBot,
+        LongPollingSingleThreadUpdateConsumer {
 
     private final TelegramClient telegramClient;
+
+    @Value("${bot.token}")
+    private String botToken;
 
     public MainBot() {
         telegramClient = new OkHttpTelegramClient(getBotToken());
@@ -24,7 +29,7 @@ public class MainBot implements SpringLongPollingBot, LongPollingSingleThreadUpd
 
     @Override
     public String getBotToken() {
-        return "8320629174:AAEq6quBWGg6BC4vxNyDwCZtt8jYM0QzIfI";
+        return botToken;
     }
 
     @Override
@@ -58,16 +63,3 @@ public class MainBot implements SpringLongPollingBot, LongPollingSingleThreadUpd
         System.out.println("Registered bot running state is: " + botSession.isRunning());
     }
 }
-/*
-Done! Congratulations on your new bot. You will find it at
-t.me/kras23_work_today_bot.
-You can now add a description, about section and profile picture for your bot,
-see /help for a list of commands. By the way, when you've finished creating your cool bot,
-ping our Bot Support if you want a better username for it. Just make sure the bot is fully operational before
-you do this.
-
-Use this token to access the HTTP API:
-8320629174:AAEq6quBWGg6BC4vxNyDwCZtt8jYM0QzIfI
-Keep your token secure and store it safely, it can be used by anyone to control your bot.
-
-For a description of the Bot API, see this page: https://core.telegram.org/bots/api*/
