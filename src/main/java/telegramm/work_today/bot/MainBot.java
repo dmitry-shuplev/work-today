@@ -13,18 +13,18 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import telegramm.work_today.bot.commands.CommandHandler;
 
 @Component
 public class MainBot implements SpringLongPollingBot,
         LongPollingSingleThreadUpdateConsumer {
 
-    private final TelegramClient telegramClient;
-
+    private final CommandHandler commandHandler;
     @Value("${bot.token}")
     private String botToken;
 
-    public MainBot() {
-        telegramClient = new OkHttpTelegramClient(getBotToken());
+    public MainBot(CommandHandler commandHandler) {
+        this.commandHandler = commandHandler;
     }
 
     @Override
@@ -39,23 +39,8 @@ public class MainBot implements SpringLongPollingBot,
 
     @Override
     public void consume(Update update) {
-        // We check if the update has a message and the message has text
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            // Set variables
-            String message_text = update.getMessage().getText();
-            long chat_id = update.getMessage().getChatId();
+        commandHandler.handle(update);
 
-            SendMessage message = SendMessage // Create a message object
-                    .builder()
-                    .chatId(chat_id)
-                    .text(message_text)
-                    .build();
-            try {
-                telegramClient.execute(message); // Sending our message object to user
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @AfterBotRegistration
